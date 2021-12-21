@@ -4,51 +4,44 @@ import {GraphQLServer} from 'graphql-yoga';
 /* Scalar types -> String, Boolean, Int, Float, ID */
 const typeDefs = `
     type Query {
+        me: User!
+        post: Post!
+    }
+    
+    type User {
         id: ID!
         name: String!
-        age: Int!
-        employed: Boolean!
-        gpa: Float
+        email: String!
+        age: Int
+    }
+    
+    type Post {
+        id: ID!
         title: String!
-        price: Float!
-        releaseYear: Int
-        rating: Float
-        inStock: Boolean!
+        body: String!
+        published: Boolean!
+           
     }
 `
 
 /* Resolvers -> Funciones que resuelven las consultas */
 const resolvers = {
     Query: {
-        id() {
-            return '123123'
+        me() {
+            return {
+                id: '123123',
+                name: 'Arian Angoma',
+                email: 'arian.angoma.js@gmail.com',
+                age: 21
+            }
         },
-        name() {
-            return 'Arian Angoma'
-        },
-        age() {
-            return 21
-        },
-        employed() {
-            return true
-        },
-        gpa() {
-            return null
-        },
-        title() {
-            return 'The War of Art'
-        },
-        price() {
-            return 12.99
-        },
-        releaseYear() {
-            return 2000
-        },
-        rating() {
-            return 5
-        },
-        inStock() {
-            return true
+        post() {
+            return {
+                id: '123123',
+                title: 'GraphQL',
+                body: 'Course GraphQL',
+                published: true
+            }
         }
     }
 }
