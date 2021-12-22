@@ -1,13 +1,53 @@
 import {GraphQLServer} from 'graphql-yoga';
 
+/* Demo user data */
+const users = [
+    {
+        id: '1',
+        name: 'Arian',
+        email: 'arian.angoma.js@gmail.com',
+        age: 21
+    },
+    {
+        id: '2',
+        name: 'Andrea',
+        email: 'andrea@gmail.com',
+    },
+    {
+        id: '3',
+        name: 'Israel',
+        email: 'israel@gmail.com',
+    }
+];
+
+/* Demo post data */
+const posts = [
+    {
+        id: '1',
+        title: 'GraphQL',
+        body: 'GraphQL course',
+        published: true
+    },
+    {
+        id: '2',
+        title: 'NodeJS',
+        body: 'NodeJS course',
+        published: true
+    },
+    {
+        id: '3',
+        title: 'ExpressJS',
+        body: 'ExpressJS course',
+        published: false
+    }
+]
+
 /* Type definitions -> Describe las operaciones y estructura de los datos */
 /* Scalar types -> String, Boolean, Int, Float, ID */
 const typeDefs = `
     type Query {
-        greeting(name: String, position: String): String!
-        add(num1: Float!, num2: Float!): Float!
-        subtract(numbers: [Float!]!): Float!
-        grades: [Int!]!
+        users(query: String): [User!]!
+        posts(query: String): [Post!]!
         me: User!
         post: Post!
     }
@@ -30,22 +70,22 @@ const typeDefs = `
 /* Resolvers -> Funciones que resuelven las consultas */
 const resolvers = {
     Query: {
-        greeting(parent, args, ctx, info) {
-            /*console.log(args);*/
-            return (args.name && args.position) ? `Hello ${args.name}. You are my favorite ${args.position}` : 'Hello';
-        },
-        add(parent, {num1, num2}, ctx, info) {
-            return num1 + num2;
-        },
-        subtract(parent, args, ctx, info) {
-            if (!args.numbers.length) return 0;
+        users(parent, args, ctx, info) {
+            if (!args.query) return users;
 
-            return args.numbers.reduce((accumulator, currentValue) => {
-                return accumulator - currentValue;
-            })
+            return users.filter(user => {
+                return user.name.toLowerCase().includes(args.query.toLowerCase());
+            });
         },
-        grades(parent, args, ctx, info) {
-            return [99, 80, 93]
+        posts(parent, args, ctx, info) {
+            if (!args.query) return posts;
+
+            return posts.filter(post => {
+                const isTitleMatch = post.title.toLowerCase().includes(args.query.toLowerCase());
+                const isBodyMatch = post.body.toLowerCase().includes(args.query.toLowerCase());
+
+                return isTitleMatch || isBodyMatch;
+            });
         },
         me() {
             return {
