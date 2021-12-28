@@ -1,20 +1,24 @@
-const {GraphQLServer} = require('graphql-yoga');
+const {GraphQLServer, PubSub} = require('graphql-yoga');
 
 /* Importaciones propias */
-const {Query, Mutation, User, Post, Comment} = require('./resolvers');
+const {Query, Mutation, Subscription, User, Post, Comment} = require('./resolvers');
 const db = require('./db');
+
+const pubsub = new PubSub()
 
 const server = new GraphQLServer({
     typeDefs: './src/schema.graphql',
     resolvers: {
         Query,
         Mutation,
+        Subscription,
         User,
         Post,
         Comment
     },
     context: {
-        db
+        db,
+        pubsub
     }
 });
 
