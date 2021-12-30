@@ -20,6 +20,11 @@ type Mutation {
     updateComment(id: ID!, data: UpdateCommentInput!): Comment!
 }
 
+type Subscription {
+    comment(postId: ID!): Comment!
+    post: PostSubscriptionPayload!
+}
+
 input CreateUserInput {
     name: String!
     email: String!
