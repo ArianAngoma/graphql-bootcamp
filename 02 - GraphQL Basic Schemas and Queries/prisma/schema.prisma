@@ -15,7 +15,6 @@ model User {
     name String
     email String @unique
     age Int?
-    asd Int
     posts Post[]
     comments Comment[]
 }
