@@ -1,22 +1,14 @@
 const {v4: uuidv4} = require('uuid');
-const {PrismaClient} = require('@prisma/client');
-
-const prisma = new PrismaClient();
 
 const Mutation = {
-    async createUser(parent, args, {db}, info) {
+    async createUser(parent, args, {db, prisma}, info) {
         /* Ver si el email ya esta en uso */
         const emailTaken = db.users.some(user => user.email === args.data.email);
 
         if (emailTaken) throw new Error('Email taken.');
 
-        const user = {
-            id: uuidv4(),
-            ...args.data
-        }
-
-        const allUsers = await prisma.user.findMany()
-        console.log(allUsers)
+        const user = await prisma.user.create({data: {...args.data}});
+        console.log(user);
 
         db.users.push(user);
 
