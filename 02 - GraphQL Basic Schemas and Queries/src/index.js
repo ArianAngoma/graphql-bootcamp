@@ -4,7 +4,8 @@ const {GraphQLServer, PubSub} = require('graphql-yoga');
 const {Query, Mutation, Subscription, User, Post, Comment} = require('./resolvers');
 const db = require('./db');
 
-const pubsub = new PubSub()
+const pubsub = new PubSub();
+
 
 const server = new GraphQLServer({
     typeDefs: './src/schema.graphql',
