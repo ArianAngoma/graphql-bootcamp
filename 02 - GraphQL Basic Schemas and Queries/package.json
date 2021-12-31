@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node src/index.js",
-    "dev": "nodemon src/index.js --ext js,graphql,prisma"
+    "dev": "nodemon src/index.js --ext js,graphql"
   },
   "author": "ArianAngoma",
   "license": "ISC",
@@ -14,7 +14,6 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "nodemon": "^2.0.15",
-    "prisma": "^3.7.0"
+    "nodemon": "^2.0.15"
   }
 }
