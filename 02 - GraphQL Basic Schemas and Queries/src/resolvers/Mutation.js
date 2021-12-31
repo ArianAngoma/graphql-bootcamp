@@ -3,25 +3,32 @@ const {v4: uuidv4} = require('uuid');
 const Mutation = {
     async createUser(parent, args, {db, prisma}, info) {
         /* Ver si el email ya esta en uso */
-        const emailTaken = db.users.some(user => user.email === args.data.email);
+        const emailTaken = await prisma.user.findUnique({
+            where: {
+                email: args.data.email
+            }
+        });
 
         if (emailTaken) throw new Error('Email taken.');
 
         const user = await prisma.user.create({data: {...args.data}});
-        console.log(user);
 
         db.users.push(user);
 
         return user;
     },
-    deleteUser(parent, args, {db}, info) {
-        const userIndex = db.users.findIndex(user => user.id === args.id);
+    async deleteUser(parent, {id}, {prisma}, info) {
+        const user = await prisma.user.findUnique({
+            where: {
+                id
+            }
+        });
 
-        if (userIndex === -1) throw new Error('User not found');
+        if (!user) throw new Error('User not found');
 
-        const deletedUsers = db.users.splice(userIndex, 1);
+        const deletedUsers = await prisma.user.delete({where: {id}});
 
-        db.posts = db.posts.filter(post => {
+        /*db.posts = db.posts.filter(post => {
             const match = post.author === args.id;
 
             if (match) db.comments = db.comments.filter(comment => comment.post !== post.id);
@@ -29,26 +36,44 @@ const Mutation = {
             return !match;
         });
 
-        db.comments = db.comments.filter(comment => comment.author !== args.id);
+        db.comments = db.comments.filter(comment => comment.author !== args.id);*/
 
-        return deletedUsers[0];
+        return deletedUsers;
     },
-    updateUser(parent, {id, data}, {db}, info) {
-        const user = db.users.find(user => user.id === id);
+    async updateUser(parent, {id, data}, {db, prisma}, info) {
+        let user = await prisma.user.findUnique({
+            where: {
+                id
+            }
+        });
 
         if (!user) throw new Error('User not found');
 
         if (typeof data.email === 'string') {
-            const emailTaken = db.users.some(user => user.email === data.email);
+            const emailTaken = await prisma.user.findUnique({where: {email: data.email}});
 
-            if (emailTaken) throw new Error('Email taken');
+            if (emailTaken) throw new Error('Email taken.');
 
-            user.email = data.email;
+            user = await prisma.user.update({
+                where: {id},
+                data: {email: data.email}
+            });
         }
 
-        if (typeof data.name === 'string') user.name = data.name;
+        if (typeof data.name === 'string') {
+            user = await prisma.user.update({
+                where: {id},
+                data: {name: data.name}
+            });
+        }
 
-        if (typeof data.age !== 'undefined') user.age = data.age;
+
+        if (typeof data.age !== 'undefined'){
+            user = await prisma.user.update({
+                where: {id},
+                data: {age: data.age}
+            });
+        }
 
         return user;
     },

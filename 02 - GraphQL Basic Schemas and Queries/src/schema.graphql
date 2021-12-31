@@ -8,8 +8,8 @@ type Query {
 
 type Mutation {
     createUser(data: CreateUserInput!): User!
-    deleteUser(id: ID!): User!
-    updateUser(id: ID!, data: UpdateUserInput!): User!
+    deleteUser(id: Int!): User!
+    updateUser(id: Int!, data: UpdateUserInput!): User!
 
     createPost(data: CreatePostInput!): Post!
     deletePost(id: ID!): Post!
@@ -85,7 +85,7 @@ type Comment {
     post: Post!
 }
 
-enum  MutationType {
+enum MutationType {
     CREATED
     UPDATED
     DELETED
