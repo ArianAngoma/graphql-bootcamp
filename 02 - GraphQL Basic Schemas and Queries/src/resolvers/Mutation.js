@@ -77,17 +77,12 @@ const Mutation = {
 
         return user;
     },
-    createPost(parent, args, {db, pubsub}, info) {
-        const userExists = db.users.some(user => user.id === args.data.author);
+    async createPost(parent, args, {db, pubsub, prisma}, info) {
+        const userExists = await prisma.user.findUnique({where: {id: args.data.author}});
 
-        if (!userExists) throw new Error('User nor found');
+        if (!userExists) throw new Error('User not found');
 
-        const post = {
-            id: uuidv4(),
-            ...args.data
-        }
-
-        db.posts.push(post);
+        const post = await prisma.post.create({data: {...args.data}});
 
         if (args.data.published) pubsub.publish('post', {
             post: {
@@ -98,7 +93,7 @@ const Mutation = {
 
         return post;
     },
-    deletePost(parent, args, {db, pubsub}, info) {
+    async deletePost(parent, args, {db, pubsub}, info) {
         const postIndex = db.posts.findIndex(post => post.id === args.id);
 
         if (postIndex === -1) throw new Error('Post not found');
@@ -116,7 +111,7 @@ const Mutation = {
 
         return post;
     },
-    updatePost(parent, {id, data}, {db, pubsub}, info) {
+    async updatePost(parent, {id, data}, {db, pubsub}, info) {
         const post = db.posts.find(post => post.id === id);
 
         const originalPost = {...post};

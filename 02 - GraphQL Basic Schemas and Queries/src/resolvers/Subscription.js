@@ -1,7 +1,12 @@
 const Subscription = {
     comment: {
-        subscribe(parent, {postId}, {db, pubsub}, info) {
-            const post = db.posts.find(post => post.id === postId && post.published === true);
+        subscribe(parent, {postId}, {db, pubsub, prisma}, info) {
+            const post = prisma.post.findUnique({
+                where: {
+                    id: postId,
+                    published: true
+                }
+            });
 
             if (!post) throw new Error('Post not found');
 
