@@ -1,12 +1,12 @@
 const {GraphQLServer, PubSub} = require('graphql-yoga');
-const {PrismaClient} = require('@prisma/client');
+require('dotenv').config();
 
 /* Importaciones propias */
 const {Query, Mutation, Subscription, User, Post, Comment} = require('./resolvers');
 const db = require('./db');
+require('./database/config')();
 
 const pubsub = new PubSub();
-const prisma = new PrismaClient();
 
 const server = new GraphQLServer({
     typeDefs: './src/schema.graphql',
@@ -20,7 +20,6 @@ const server = new GraphQLServer({
     },
     context: {
         db,
-        prisma,
         pubsub
     }
 });

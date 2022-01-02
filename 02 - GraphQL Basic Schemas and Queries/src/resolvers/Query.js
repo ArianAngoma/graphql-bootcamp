@@ -1,6 +1,6 @@
 const Query = {
-    users(parent, args, {db}, info) {
-        if (!args.query) return db.users;
+    async users(parent, args, {db, prisma}, info) {
+        if (!args.query) return await prisma.user.findMany();
 
         return db.users.filter(user => {
             return user.name.toLowerCase().includes(args.query.toLowerCase());
