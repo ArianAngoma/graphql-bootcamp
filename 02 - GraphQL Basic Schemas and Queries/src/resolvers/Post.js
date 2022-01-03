@@ -1,11 +1,12 @@
+const User = require('../models/User');
+const Comment = require('../models/Comment');
+
 const Post = {
-    author(parent, args, {db}, info) {
-        return db.users.find(user => user.id === parent.author);
+    author(parent, args, ctx, info) {
+        return User.findById(parent.author);
     },
-    comments(parent, args, {db}, info) {
-        return db.comments.filter(comment => {
-            return comment.post === parent.id;
-        });
+    comments(parent, args, ctx, info) {
+        return Comment.find({post: parent.id});
     }
 }
 

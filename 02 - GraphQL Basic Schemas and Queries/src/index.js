@@ -3,7 +3,6 @@ require('dotenv').config();
 
 /* Importaciones propias */
 const {Query, Mutation, Subscription, User, Post, Comment} = require('./resolvers');
-const db = require('./db');
 require('./database/config')();
 
 const pubsub = new PubSub();
@@ -19,7 +18,6 @@ const server = new GraphQLServer({
         Comment
     },
     context: {
-        db,
         pubsub
     }
 });

@@ -1,12 +1,9 @@
+const Post = require('../models/Post');
+
 const Subscription = {
     comment: {
-        subscribe(parent, {postId}, {db, pubsub, prisma}, info) {
-            const post = prisma.post.findUnique({
-                where: {
-                    id: postId,
-                    published: true
-                }
-            });
+        subscribe(parent, {postId}, {pubsub}, info) {
+            const post = Post.find({id: postId, published: true});
 
             if (!post) throw new Error('Post not found');
 

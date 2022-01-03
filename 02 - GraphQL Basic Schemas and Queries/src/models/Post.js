@@ -32,11 +32,10 @@ PostSchema.methods.toJSON = function () {
 }
 
 /* Eliminar documentos relacionados */
-PostSchema.pre('findOneAndDelete', async function (next) {
-    const {_id} = this.getFilter();
-    // console.log(_id);
-    await Comment.deleteMany({post: _id}).exec();
-    next();
+PostSchema.post('findOneAndDelete', async function (doc) {
+    // console.log(doc._id);
+    await Comment.deleteMany({post: doc._id}).exec();
 });
+
 
 module.exports = model('Post', PostSchema);
