@@ -1,9 +1,9 @@
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 /* Impotaciones propias */
-const User = require('../models/User');
-const Post = require('../models/Post');
-const Comment = require('../models/Comment');
+const {User, Post, Comment} = require('../models');
+const {generateJWT} = require('../helpers/jwt');
 
 const Mutation = {
     async createUser(parent, {data}, ctx, info) {
@@ -21,22 +21,18 @@ const Mutation = {
 
         await user.save();
 
-        return user;
+        /* Generar token */
+        const token = await generateJWT(user.id);
+
+        return {
+            user,
+            token
+        }
     },
     async deleteUser(parent, {id}, ctx, info) {
         const user = await User.findByIdAndDelete(id);
 
         if (!user) throw new Error('User not found');
-
-        /*db.posts = db.posts.filter(post => {
-            const match = post.author === args.id;
-
-            if (match) db.comments = db.comments.filter(comment => comment.post !== post.id);
-
-            return !match;
-        });
-
-        db.comments = db.comments.filter(comment => comment.author !== args.id);*/
 
         return user;
     },
