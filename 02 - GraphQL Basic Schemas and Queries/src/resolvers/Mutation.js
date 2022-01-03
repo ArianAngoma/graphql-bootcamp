@@ -1,16 +1,24 @@
+const bcrypt = require('bcryptjs');
+
 /* Impotaciones propias */
 const User = require('../models/User');
 const Post = require('../models/Post');
 const Comment = require('../models/Comment');
 
 const Mutation = {
-    async createUser(parent, args, ctx, info) {
+    async createUser(parent, {data}, ctx, info) {
+        if (data.password.length < 6) throw new Error('Password must be 6 characters or longer');
+
         /* Ver si el email ya esta en uso */
-        const emailTaken = await User.findOne({email: args.data.email});
+        const emailTaken = await User.findOne({email: data.email});
 
         if (emailTaken) throw new Error('Email taken.');
 
-        const user = new User({...args.data});
+        const user = new User({...data});
+
+        const salt = bcrypt.genSaltSync();
+        user.password = bcrypt.hashSync(data.password, salt);
+
         await user.save();
 
         return user;
