@@ -1,5 +1,4 @@
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
 
 /* Impotaciones propias */
 const {User, Post, Comment} = require('../models');
@@ -137,6 +136,10 @@ const Mutation = {
         });
 
         return comment;
+    },
+
+    async login(parent, args, ctx, info) {
+
     }
 }
 
