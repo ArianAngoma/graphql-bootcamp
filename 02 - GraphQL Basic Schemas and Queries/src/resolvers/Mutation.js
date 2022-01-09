@@ -28,6 +28,21 @@ const Mutation = {
             token
         }
     },
+    async login(parent, {data}, ctx, info) {
+        const user = await User.findOne({email: data.email});
+        if (!user) throw new Error('Unable to login');
+        console.log(user)
+        const isMatch = await bcrypt.compareSync(data.password, user.password);
+        if (!isMatch) throw new Error('Unable to login');
+
+        /* Generar token */
+        const token = await generateJWT(user.id);
+
+        return {
+            user,
+            token
+        }
+    },
     async deleteUser(parent, {id}, ctx, info) {
         const user = await User.findByIdAndDelete(id);
 
@@ -36,11 +51,18 @@ const Mutation = {
         return user;
     },
     async updateUser(parent, {id, data}, ctx, info) {
-        const emailTaken = await User.findOne({email: data.email});
+        const {password, ...dataUser} = data;
+
+        const emailTaken = await User.findOne({email: dataUser.email});
 
         if (emailTaken) throw new Error('Email taken.');
 
-        let user = await User.findByIdAndUpdate(id, data, {new: true});
+        if (password) {
+            const salt = bcrypt.genSaltSync();
+            dataUser.password = bcrypt.hashSync(password, salt);
+        }
+
+        let user = await User.findByIdAndUpdate(id, dataUser, {new: true});
 
         if (!user) throw new Error('User not found');
 
@@ -136,10 +158,6 @@ const Mutation = {
         });
 
         return comment;
-    },
-
-    async login(parent, args, ctx, info) {
-
     }
 }
 
