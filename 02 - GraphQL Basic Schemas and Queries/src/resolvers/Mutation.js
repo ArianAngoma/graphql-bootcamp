@@ -31,7 +31,7 @@ const Mutation = {
     async login(parent, {data}, ctx, info) {
         const user = await User.findOne({email: data.email});
         if (!user) throw new Error('Unable to login');
-        console.log(user)
+
         const isMatch = await bcrypt.compareSync(data.password, user.password);
         if (!isMatch) throw new Error('Unable to login');
 
