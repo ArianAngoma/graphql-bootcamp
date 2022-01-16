@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 /* Impotaciones propias */
 const {User, Post, Comment} = require('../models');
 const {generateJWT} = require('../helpers/jwt');
+const {getUserId} = require('../utils/getUserId');
 
 const Mutation = {
     async createUser(parent, {data}, ctx, info) {
@@ -68,12 +69,14 @@ const Mutation = {
 
         return user;
     },
-    async createPost(parent, {data}, {pubsub}, info) {
-        const userExists = await User.findById(data.author);
+    async createPost(parent, {data}, {pubsub, req}, info) {
+        const userId = getUserId(req);
+
+        const userExists = await User.findById(userId);
 
         if (!userExists) throw new Error('User not found');
 
-        const post = new Post({...data});
+        const post = new Post({...data, author: userId});
         await post.save();
 
         if (data.published) pubsub.publish('post', {

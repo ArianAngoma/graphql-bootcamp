@@ -17,8 +17,12 @@ const server = new GraphQLServer({
         Post,
         Comment
     },
-    context: {
-        pubsub
+    context(req) {
+        // console.log(req.request.headers);
+        return {
+            pubsub,
+            req
+        }
     }
 });
 
