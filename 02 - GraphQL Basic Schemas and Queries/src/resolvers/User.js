@@ -2,10 +2,11 @@ const Post = require('../models/Post');
 const Comment = require('../models/Comment');
 
 const User = {
-    posts(parent, args, ctx, info) {
+    // Todo revisar el error de async
+    async posts(parent, args, ctx, info) {
         return Post.find({author: parent.id});
     },
-    comments(parent, args, ctx, info) {
+    async comments(parent, args, ctx, info) {
         return Comment.find({author: parent.id});
     }
 }

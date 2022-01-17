@@ -8,7 +8,7 @@ type Mutation {
     createUser(data: CreateUserInput!): AuthPayload!
     login(data: LoginUserInput!): AuthPayload!
     deleteUser(id: String!): User!
-    updateUser(id: String!, data: UpdateUserInput!): User!
+    updateUser(data: UpdateUserInput!): User!
 
     createPost(data: CreatePostInput!): Post!
     deletePost(id: String!): Post!

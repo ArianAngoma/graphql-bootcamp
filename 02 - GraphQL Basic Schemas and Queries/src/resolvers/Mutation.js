@@ -51,7 +51,9 @@ const Mutation = {
 
         return user;
     },
-    async updateUser(parent, {id, data}, ctx, info) {
+    async updateUser(parent, {id, data}, {req}, info) {
+        const userId = getUserId(req);
+
         const {password, ...dataUser} = data;
 
         const emailTaken = await User.findOne({email: dataUser.email});
@@ -63,7 +65,7 @@ const Mutation = {
             dataUser.password = bcrypt.hashSync(password, salt);
         }
 
-        let user = await User.findByIdAndUpdate(id, dataUser, {new: true});
+        let user = await User.findByIdAndUpdate(userId, dataUser, {new: true});
 
         if (!user) throw new Error('User not found');
 
