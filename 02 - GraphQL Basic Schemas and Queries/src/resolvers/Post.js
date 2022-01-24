@@ -1,3 +1,4 @@
+/* Importaciones propias */
 const User = require('../models/User');
 const Comment = require('../models/Comment');
 
