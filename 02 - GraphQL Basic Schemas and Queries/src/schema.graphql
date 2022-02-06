@@ -7,7 +7,7 @@ type Query {
 type Mutation {
     createUser(data: CreateUserInput!): AuthPayload!
     login(data: LoginUserInput!): AuthPayload!
-    deleteUser(id: String!): User!
+    deleteUser: User!
     updateUser(data: UpdateUserInput!): User!
 
     createPost(data: CreatePostInput!): Post!

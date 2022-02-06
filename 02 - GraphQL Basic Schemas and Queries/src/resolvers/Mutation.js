@@ -44,10 +44,10 @@ const Mutation = {
             token
         }
     },
-    async deleteUser(parent, {id}, ctx, info) {
-        const user = await User.findByIdAndDelete(id);
+    async deleteUser(parent, args, {req}, info) {
+        const userId = getUserId(req);
 
-        if (!user) throw new Error('User not found');
+        const user = await User.findByIdAndDelete(userId);
 
         return user;
     },
