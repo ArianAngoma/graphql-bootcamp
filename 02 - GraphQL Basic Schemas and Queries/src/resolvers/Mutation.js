@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 /* Impotaciones propias */
 const {User, Post, Comment} = require('../models');
 const {generateJWT} = require('../helpers/jwt');
-const {getUserId} = require('../utils/getUserId');
+const {validateJWT} = require('../middlewares/validate-jwt');
 
 const Mutation = {
     async createUser(parent, {data}, ctx, info) {
@@ -44,15 +44,13 @@ const Mutation = {
             token
         }
     },
-    async deleteUser(parent, args, {req}, info) {
-        const userId = getUserId(req);
+    async deleteUser(parent, args, {request}, info) {
+        const user = await validateJWT(request);
 
-        const user = await User.findByIdAndDelete(userId);
-
-        return user;
+        return User.findByIdAndDelete(user.id);
     },
-    async updateUser(parent, {id, data}, {req}, info) {
-        const userId = getUserId(req);
+    async updateUser(parent, {id, data}, {request}, info) {
+        const user = await validateJWT(request);
 
         const {password, ...dataUser} = data;
 
@@ -65,20 +63,12 @@ const Mutation = {
             dataUser.password = bcrypt.hashSync(password, salt);
         }
 
-        let user = await User.findByIdAndUpdate(userId, dataUser, {new: true});
-
-        if (!user) throw new Error('User not found');
-
-        return user;
+        return User.findByIdAndUpdate(user.id, dataUser, {new: true});
     },
-    async createPost(parent, {data}, {pubsub, req}, info) {
-        const userId = getUserId(req);
+    async createPost(parent, {data}, {pubsub, request}, info) {
+        const user = await validateJWT(request);
 
-        const userExists = await User.findById(userId);
-
-        if (!userExists) throw new Error('User not found');
-
-        const post = new Post({...data, author: userId});
+        const post = new Post({...data, author: user.id});
         await post.save();
 
         if (data.published) pubsub.publish('post', {
@@ -118,13 +108,13 @@ const Mutation = {
 
         return post;
     },
-    async createComment(parent, {data}, {pubsub}, info) {
-        const userExists = await User.findById(data.author);
+    async createComment(parent, {data}, {pubsub, request}, info) {
+        const user = await validateJWT(request);
         const postExists = await Post.findOne({id: data.post, published: true});
 
-        if (!userExists || !postExists) throw new Error('Unable to find user and post');
+        if (!user || !postExists) throw new Error('Unable to find user and post');
 
-        const comment = new Comment({...data});
+        const comment = new Comment({...data, author: user.id});
         await comment.save();
 
         pubsub.publish(`comment ${data.post}`, {
