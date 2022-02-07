@@ -7,6 +7,7 @@ require('./database/config')();
 
 const pubsub = new PubSub();
 
+// ToDo: Revisar el context para el uso de JWT
 const server = new GraphQLServer({
     typeDefs: './src/schema.graphql',
     resolvers: {
