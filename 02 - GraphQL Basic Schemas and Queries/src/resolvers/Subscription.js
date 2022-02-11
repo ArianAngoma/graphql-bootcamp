@@ -2,8 +2,8 @@ const Post = require('../models/Post');
 
 const Subscription = {
     comment: {
-        subscribe(parent, {postId}, {pubsub}, info) {
-            const post = Post.find({id: postId, published: true});
+        async subscribe(parent, {postId}, {pubsub}, info) {
+            const post = await Post.find({id: postId, published: true});
 
             if (!post) throw new Error('Post not found');
 

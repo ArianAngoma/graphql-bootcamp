@@ -110,7 +110,7 @@ const Mutation = {
     },
     async createComment(parent, {data}, {pubsub, request}, info) {
         const user = await validateJWT(request);
-        const postExists = await Post.findOne({id: data.post, published: true});
+        const postExists = await Post.findOne({_id: data.post, published: true});
 
         if (!user || !postExists) throw new Error('Unable to find user and post');
 

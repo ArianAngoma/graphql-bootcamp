@@ -7,6 +7,9 @@ const User = {
     },
     async comments(parent, args, ctx, info) {
         return Comment.find({author: parent.id});
+    },
+    async email(parent, args, ctx, info) {
+        return null;
     }
 }
 
