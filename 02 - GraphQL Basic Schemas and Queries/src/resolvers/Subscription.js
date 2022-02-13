@@ -1,3 +1,4 @@
+/* Importaciones propias */
 const Post = require('../models/Post');
 
 const Subscription = {
