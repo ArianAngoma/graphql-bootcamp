@@ -13,6 +13,7 @@ const {
 	Post,
 	Comment,
 } = require('./resolvers');
+const {...models} = require('./models');
 require('./database/config')();
 
 const pubsub = new PubSub();
@@ -32,6 +33,7 @@ const server = new GraphQLServer({
 		return {
 			pubsub,
 			request,
+			models,
 		};
 	},
 });
