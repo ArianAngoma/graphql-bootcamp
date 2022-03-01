@@ -1,10 +1,10 @@
-/* Importaciones propias */
-const {Post} = require('../models');
-
 const Subscription = {
 	comment: {
-		async subscribe(parent, {postId}, {pubsub}, info) {
-			const post = await Post.find({
+		async subscribe(parent, {postId}, {
+			pubsub,
+			models,
+		}, info) {
+			const post = await models.Post.find({
 				id: postId,
 				published: true,
 			});

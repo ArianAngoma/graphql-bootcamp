@@ -1,51 +1,45 @@
 /* Importaciones propias */
-const {
-	User,
-	Post,
-	Comment,
-} = require('../models');
 const {validateJWT} = require('../middlewares/validate-jwt');
 
 const Query = {
-	async users(parent, {query}, ctx, info) {
+	async users(parent, {query}, {models}, info) {
 		if (!query) {
-			return User.find();
+			return models.User.find();
 		}
 
-		return User.find({
+		return models.User.find({
 			name: {
 				$regex: query,
 				$options: 'i',
 			},
 		});
 	},
-	async posts(parent, {query}, ctx, info) {
+	async posts(parent, {query}, {models}, info) {
 		if (!query) {
-			return Post.find();
+			return models.Post.find();
 		}
 
-		return Post.find({
-			$or:
-				[
-					{
-						title: {
-							$regex: query,
-							$options: 'i',
-						},
-					},
-					{
-						body: {
-							$regex: query,
-							$options: 'i',
-						},
-					},
-				],
+		return models.Post.find({
+			$or: [{
+				title: {
+					$regex: query,
+					$options: 'i',
+				},
+			}, {
+				body: {
+					$regex: query,
+					$options: 'i',
+				},
+			}],
 		});
 	},
-	async post(parent, {id}, {request}, info) {
-		return Post.findById(id);
+	async post(parent, {id}, {models}, info) {
+		return models.Post.findById(id);
 	},
-	async myPosts(parent, {query}, {request}, info) {
+	async myPosts(parent, {query}, {
+		request,
+		models,
+	}, info) {
 		const user = await validateJWT(request);
 
 		const opArgs = {
@@ -53,30 +47,27 @@ const Query = {
 		};
 
 		if (query) {
-			opArgs.$or = [
-				{
-					title: {
-						$regex: query,
-						$options: 'i',
-					},
+			opArgs.$or = [{
+				title: {
+					$regex: query,
+					$options: 'i',
 				},
-				{
-					body: {
-						$regex: query,
-						$options: 'i',
-					},
+			}, {
+				body: {
+					$regex: query,
+					$options: 'i',
 				},
-			];
+			}];
 		}
 
-		return Post.find(opArgs);
+		return models.Post.find(opArgs);
 	},
-	async comments(parent, {query}, ctx, info) {
+	async comments(parent, {query}, {models}, info) {
 		if (!query) {
-			return Comment.find();
+			return models.Comment.find();
 		}
 
-		return Comment.find({
+		return models.Comment.find({
 			text: {
 				$regex: query,
 				$options: 'i',

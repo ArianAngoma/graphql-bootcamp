@@ -1,28 +1,23 @@
 const bcrypt = require('bcryptjs');
 
 /* Impotaciones propias */
-const {
-	User,
-	Post,
-	Comment,
-} = require('../models');
 const {generateJWT} = require('../helpers/jwt');
 const {validateJWT} = require('../middlewares/validate-jwt');
 
 const Mutation = {
-	async createUser(parent, {data}, ctx, info) {
+	async createUser(parent, {data}, {models}, info) {
 		if (data.password.length < 6) {
 			throw new Error('Password must be 6 characters or longer');
 		}
 
 		/* Ver si el email ya esta en uso */
-		const emailTaken = await User.findOne({email: data.email});
+		const emailTaken = await models.User.findOne({email: data.email});
 
 		if (emailTaken) {
 			throw new Error('Email taken.');
 		}
 
-		const user = new User({...data});
+		const user = new models.User({...data});
 
 		const salt = bcrypt.genSaltSync();
 		user.password = bcrypt.hashSync(data.password, salt);
@@ -37,8 +32,8 @@ const Mutation = {
 			token,
 		};
 	},
-	async login(parent, {data}, ctx, info) {
-		const user = await User.findOne({email: data.email});
+	async login(parent, {data}, {models}, info) {
+		const user = await models.User.findOne({email: data.email});
 		if (!user) {
 			throw new Error('Unable to login');
 		}
@@ -56,15 +51,21 @@ const Mutation = {
 			token,
 		};
 	},
-	async deleteUser(parent, args, {request}, info) {
+	async deleteUser(parent, args, {
+		request,
+		models,
+	}, info) {
 		const user = await validateJWT(request);
 
-		return User.findByIdAndDelete(user.id);
+		return models.User.findByIdAndDelete(user.id);
 	},
 	async updateUser(parent, {
 		id,
 		data,
-	}, {request}, info) {
+	}, {
+		request,
+		models,
+	}, info) {
 		const user = await validateJWT(request);
 
 		const {
@@ -72,7 +73,7 @@ const Mutation = {
 			...dataUser
 		} = data;
 
-		const emailTaken = await User.findOne({email: dataUser.email});
+		const emailTaken = await models.User.findOne({email: dataUser.email});
 
 		if (emailTaken) {
 			throw new Error('Email taken.');
@@ -83,15 +84,16 @@ const Mutation = {
 			dataUser.password = bcrypt.hashSync(password, salt);
 		}
 
-		return User.findByIdAndUpdate(user.id, dataUser, {new: true});
+		return models.User.findByIdAndUpdate(user.id, dataUser, {new: true});
 	},
 	async createPost(parent, {data}, {
 		pubsub,
 		request,
+		models,
 	}, info) {
 		const user = await validateJWT(request);
 
-		const post = new Post({
+		const post = new models.Post({
 			...data,
 			author: user.id,
 		});
@@ -108,8 +110,11 @@ const Mutation = {
 
 		return post;
 	},
-	async deletePost(parent, {id}, {pubsub}, info) {
-		const post = await Post.findByIdAndDelete(id);
+	async deletePost(parent, {id}, {
+		pubsub,
+		models,
+	}, info) {
+		const post = await models.Post.findByIdAndDelete(id);
 
 		if (!post) {
 			throw new Error('Post not found');
@@ -129,8 +134,11 @@ const Mutation = {
 	async updatePost(parent, {
 		id,
 		data,
-	}, {pubsub}, info) {
-		const post = await Post.findByIdAndUpdate(id, data, {new: true});
+	}, {
+		pubsub,
+		models,
+	}, info) {
+		const post = await models.Post.findByIdAndUpdate(id, data, {new: true});
 
 		if (!post) {
 			throw new Error('Post not found');
@@ -148,9 +156,10 @@ const Mutation = {
 	async createComment(parent, {data}, {
 		pubsub,
 		request,
+		models,
 	}, info) {
 		const user = await validateJWT(request);
-		const postExists = await Post.findOne({
+		const postExists = await models.Post.findOne({
 			_id: data.post,
 			published: true,
 		});
@@ -159,7 +168,7 @@ const Mutation = {
 			throw new Error('Unable to find user and post');
 		}
 
-		const comment = new Comment({
+		const comment = new models.Comment({
 			...data,
 			author: user.id,
 		});
@@ -174,8 +183,11 @@ const Mutation = {
 
 		return comment;
 	},
-	async deleteComment(parent, {id}, {pubsub}, info) {
-		const comment = await Comment.findByIdAndDelete(id);
+	async deleteComment(parent, {id}, {
+		pubsub,
+		models,
+	}, info) {
+		const comment = await models.Comment.findByIdAndDelete(id);
 
 		if (!comment) {
 			throw new Error('Comment not found');
@@ -193,8 +205,11 @@ const Mutation = {
 	async updateComment(parent, {
 		id,
 		data,
-	}, {pubsub}, info) {
-		const comment = await Comment.findByIdAndUpdate(id, data, {new: true});
+	}, {
+		pubsub,
+		models,
+	}, info) {
+		const comment = await models.Comment.findByIdAndUpdate(id, data, {new: true});
 
 		if (!comment) {
 			throw new Error('Comment not found');
