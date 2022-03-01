@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const {User} = require('../models');
 
 const validateJWT = async (request, requireAuth = true) => {
-	const token = request.headers.authorization;
+	const token = request ? request.headers.authorization : request.connection.context.Authorization;
 
 	if (token) {
 		const {uid} = jwt.verify(token, process.env.SECRET_OR_PRIVATE_KEY);
