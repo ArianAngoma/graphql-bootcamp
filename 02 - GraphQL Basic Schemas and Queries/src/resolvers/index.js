@@ -6,10 +6,10 @@ const Comment = require('./Comment');
 const Subscription = require('./Subscription');
 
 module.exports = {
-	Query,
-	Mutation,
-	User,
-	Post,
-	Comment,
-	Subscription,
+  Query,
+  Mutation,
+  User,
+  Post,
+  Comment,
+  Subscription,
 };
