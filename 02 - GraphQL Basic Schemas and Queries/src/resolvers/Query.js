@@ -18,13 +18,15 @@ const Query = {
 
     return models.User.find(opArgs).skip(skip).limit(limit);
   },
-  async posts(parent, {query}, {models}, info) {
-    if (!query) {
-      return models.Post.find();
-    }
+  async posts(parent, {
+    query,
+    skip,
+    limit,
+  }, {models}, info) {
+    const opArgs = {};
 
-    return models.Post.find({
-      $or: [{
+    if (query) {
+      opArgs.$or = [{
         title: {
           $regex: query,
           $options: 'i',
@@ -34,8 +36,10 @@ const Query = {
           $regex: query,
           $options: 'i',
         },
-      }],
-    });
+      }];
+    }
+
+    return models.Post.find(opArgs).skip(skip).limit(limit);
   },
   async post(parent, {id}, {models}, info) {
     return models.Post.findById(id);
