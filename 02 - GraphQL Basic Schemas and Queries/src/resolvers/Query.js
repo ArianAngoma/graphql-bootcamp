@@ -47,6 +47,8 @@ const Query = {
   async myPosts(parent, {query}, {
     request,
     models,
+    skip,
+    limit,
   }, info) {
     const user = await validateJWT(request);
 
@@ -68,19 +70,23 @@ const Query = {
       }];
     }
 
-    return models.Post.find(opArgs);
+    return models.Post.find(opArgs).skip(skip).limit(limit);
   },
-  async comments(parent, {query}, {models}, info) {
-    if (!query) {
-      return models.Comment.find();
-    }
+  async comments(parent, {
+    query,
+    skip,
+    limit,
+  }, {models}, info) {
+    const opArgs = {};
 
-    return models.Comment.find({
-      text: {
+    if (query) {
+      opArgs.text = {
         $regex: query,
         $options: 'i',
-      },
-    });
+      };
+    }
+
+    return models.Comment.find(opArgs).skip(skip).limit(limit);
   },
 };
 
