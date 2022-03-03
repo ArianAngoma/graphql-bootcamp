@@ -19,6 +19,8 @@ const CommentSchema = new Schema({
     ref: 'Post',
     required: true,
   },
+}, {
+  timestamps: true,
 });
 
 CommentSchema.methods.toJSON = function() {

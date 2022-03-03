@@ -3,8 +3,11 @@ const {
   model,
 } = require('mongoose');
 
-const Post = require('./Post');
-const Comment = require('./Comment');
+/*  Importaciones propias  */
+const {
+  Post,
+  Comment,
+} = require('./index');
 
 const UserSchema = new Schema({
   name: {
@@ -26,6 +29,8 @@ const UserSchema = new Schema({
     required: true,
     trim: true,
   },
+}, {
+  timestamps: true,
 });
 
 UserSchema.methods.toJSON = function() {

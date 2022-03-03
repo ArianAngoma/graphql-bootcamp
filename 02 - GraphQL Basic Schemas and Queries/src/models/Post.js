@@ -4,7 +4,7 @@ const {
 } = require('mongoose');
 
 /* Importaciones propias */
-const Comment = require('./Comment');
+const {Comment} = require('./index');
 
 const PostSchema = new Schema({
   title: {
@@ -26,6 +26,8 @@ const PostSchema = new Schema({
     ref: 'User',
     required: true,
   },
+}, {
+  timestamps: true,
 });
 
 PostSchema.methods.toJSON = function() {
