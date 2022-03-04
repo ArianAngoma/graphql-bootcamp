@@ -4,10 +4,8 @@ const {
 } = require('mongoose');
 
 /*  Importaciones propias  */
-const {
-  Post,
-  Comment,
-} = require('./index');
+const {Comment} = require('./Comment');
+const {Post} = require('./Post');
 
 const UserSchema = new Schema({
   name: {
@@ -45,13 +43,13 @@ UserSchema.methods.toJSON = function() {
 
 /* Eliminar documentos relacionados */
 UserSchema.post('findOneAndDelete', async (doc) => {
-  // Console.log(doc._id);
+  // console.log(doc._id);
   await Post.deleteMany({author: doc._id}).exec();
 });
 
 /* Eliminar documentos relacionados */
 UserSchema.post('findOneAndDelete', async (doc) => {
-  // Console.log(doc._id);
+  // console.log(doc._id);
   await Comment.deleteMany({author: doc._id}).exec();
 });
 

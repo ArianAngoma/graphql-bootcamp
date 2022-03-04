@@ -4,7 +4,7 @@ const {
 } = require('mongoose');
 
 /* Importaciones propias */
-const {Comment} = require('./index');
+const {Comment} = require('./Comment');
 
 const PostSchema = new Schema({
   title: {
@@ -42,7 +42,7 @@ PostSchema.methods.toJSON = function() {
 
 /* Eliminar documentos relacionados */
 PostSchema.post('findOneAndDelete', async (doc) => {
-  // Console.log(doc._id);
+  // console.log(doc._id);
   await Comment.deleteMany({post: doc._id}).exec();
 });
 
