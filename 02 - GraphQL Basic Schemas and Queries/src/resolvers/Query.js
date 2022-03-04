@@ -36,8 +36,6 @@ const Query = {
       opArgs = filterQuery('Post', query);
     }
 
-    console.log(opArgs);
-
     return (orderBy) ?
       models.Post.find(opArgs)
           .skip(skip)
