@@ -1,5 +1,6 @@
 /* Importaciones propias */
 const {validateJWT} = require('../middlewares/validate-jwt');
+const {filterQuery} = require('../utils/db');
 
 const Query = {
   async users(parent, {
@@ -8,23 +9,20 @@ const Query = {
     limit,
     orderBy,
   }, {models}, info) {
-    const {
-      field,
-      sort,
-    } = orderBy;
-    const opArgs = {};
+    let opArgs = {};
 
     if (query) {
-      opArgs.name = {
-        $regex: query,
-        $options: 'i',
-      };
+      opArgs = filterQuery('User', query);
     }
 
-    return models.User.find(opArgs)
-        .skip(skip)
-        .limit(limit)
-        .sort({[field]: sort});
+    return (orderBy) ?
+      models.User.find(opArgs)
+          .skip(skip)
+          .limit(limit)
+          .sort({[orderBy.field]: orderBy.sort}) :
+      models.User.find(opArgs)
+          .skip(skip)
+          .limit(limit);
   },
   async posts(parent, {
     query,
@@ -32,30 +30,22 @@ const Query = {
     limit,
     orderBy,
   }, {models}, info) {
-    const {
-      field,
-      sort,
-    } = orderBy;
-    const opArgs = {};
+    let opArgs = {};
 
     if (query) {
-      opArgs.$or = [{
-        title: {
-          $regex: query,
-          $options: 'i',
-        },
-      }, {
-        body: {
-          $regex: query,
-          $options: 'i',
-        },
-      }];
+      opArgs = filterQuery('Post', query);
     }
 
-    return models.Post.find(opArgs)
-        .skip(skip)
-        .limit(limit)
-        .sort({[field]: sort});
+    console.log(opArgs);
+
+    return (orderBy) ?
+      models.Post.find(opArgs)
+          .skip(skip)
+          .limit(limit)
+          .sort({[orderBy.field]: orderBy.sort}) :
+      models.Post.find(opArgs)
+          .skip(skip)
+          .limit(limit);
   },
   async post(parent, {id}, {models}, info) {
     return models.Post.findById(id);
@@ -67,34 +57,23 @@ const Query = {
     limit,
     orderBy,
   }, info) {
-    const {
-      field,
-      sort,
-    } = orderBy;
     const user = await validateJWT(request);
 
-    const opArgs = {
-      author: user.id,
-    };
+    let opArgs = {};
 
     if (query) {
-      opArgs.$or = [{
-        title: {
-          $regex: query,
-          $options: 'i',
-        },
-      }, {
-        body: {
-          $regex: query,
-          $options: 'i',
-        },
-      }];
+      opArgs = filterQuery('Post', query);
     }
+    opArgs.author = user.id;
 
-    return models.Post.find(opArgs)
-        .skip(skip)
-        .limit(limit)
-        .sort({[field]: sort});
+    return (orderBy) ?
+      models.Post.find(opArgs)
+          .skip(skip)
+          .limit(limit)
+          .sort({[orderBy.field]: orderBy.sort}) :
+      models.Post.find(opArgs)
+          .skip(skip)
+          .limit(limit);
   },
   async comments(parent, {
     query,
@@ -102,23 +81,20 @@ const Query = {
     limit,
     orderBy,
   }, {models}, info) {
-    const {
-      field,
-      sort,
-    } = orderBy;
-    const opArgs = {};
+    let opArgs = {};
 
     if (query) {
-      opArgs.text = {
-        $regex: query,
-        $options: 'i',
-      };
+      opArgs = filterQuery('Comment', query);
     }
 
-    return models.Comment.find(opArgs)
-        .skip(skip)
-        .limit(limit)
-        .sort({[field]: sort});
+    return (orderBy) ?
+      models.Comment.find(opArgs)
+          .skip(skip)
+          .limit(limit)
+          .sort({[orderBy.field]: orderBy.sort}) :
+      models.Comment.find(opArgs)
+          .skip(skip)
+          .limit(limit);
   },
 };
 
