@@ -1,9 +1,9 @@
 type Query {
-    users(query: String, skip: Int, limit: Int): [User!]!
-    posts(query: String, skip: Int, limit: Int): [Post!]!
-    comments(query: String,  skip: Int, limit: Int): [Comment!]!
+    users(query: String, skip: Int, limit: Int, orderBy: UserOrderByInput): [User!]!
+    posts(query: String, skip: Int, limit: Int, orderBy: PostOrderByInput): [Post!]!
+    comments(query: String,  skip: Int, limit: Int, orderBy: CommentOrderByInput): [Comment!]!
     post(id: String!): Post!
-    myPosts(query: String, skip: Int, limit: Int): [Post!]!
+    myPosts(query: String, skip: Int, limit: Int, orderBy: PostOrderByInput): [Post!]!
 }
 
 type Mutation {
@@ -102,12 +102,6 @@ type Comment {
     updatedAt: String!
 }
 
-enum MutationType {
-    CREATED
-    UPDATED
-    DELETED
-}
-
 type PostSubscriptionPayload {
     mutation: MutationType!
     data: Post!
@@ -116,4 +110,58 @@ type PostSubscriptionPayload {
 type CommentSubscriptionPayload {
     mutation: MutationType!
     data: Comment!
+}
+
+input UserOrderByInput {
+    field: UserFieldType!,
+    sort: SortType!
+}
+
+input PostOrderByInput {
+    field: PostFieldType!,
+    sort: SortType!
+}
+
+input CommentOrderByInput {
+    field: CommentFieldType!,
+    sort: SortType!
+}
+
+enum SortType {
+    asc
+    desc
+    ascending
+    descending
+}
+
+enum UserFieldType {
+    id
+    name
+    email
+    age
+    password
+    updatedAt
+    createdAt
+}
+
+enum PostFieldType {
+    id
+    title
+    body
+    published
+    updatedAt
+    createdAt
+}
+
+enum CommentFieldType {
+    id
+    text
+    updatedAt
+    createdAt
+}
+
+enum MutationType {
+    CREATED
+    UPDATED
+    DELETED
 }

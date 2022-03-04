@@ -6,7 +6,12 @@ const Query = {
     query,
     skip,
     limit,
+    orderBy,
   }, {models}, info) {
+    const {
+      field,
+      sort,
+    } = orderBy;
     const opArgs = {};
 
     if (query) {
@@ -16,13 +21,21 @@ const Query = {
       };
     }
 
-    return models.User.find(opArgs).skip(skip).limit(limit);
+    return models.User.find(opArgs)
+        .skip(skip)
+        .limit(limit)
+        .sort({[field]: sort});
   },
   async posts(parent, {
     query,
     skip,
     limit,
+    orderBy,
   }, {models}, info) {
+    const {
+      field,
+      sort,
+    } = orderBy;
     const opArgs = {};
 
     if (query) {
@@ -39,7 +52,10 @@ const Query = {
       }];
     }
 
-    return models.Post.find(opArgs).skip(skip).limit(limit);
+    return models.Post.find(opArgs)
+        .skip(skip)
+        .limit(limit)
+        .sort({[field]: sort});
   },
   async post(parent, {id}, {models}, info) {
     return models.Post.findById(id);
@@ -49,7 +65,12 @@ const Query = {
     models,
     skip,
     limit,
+    orderBy,
   }, info) {
+    const {
+      field,
+      sort,
+    } = orderBy;
     const user = await validateJWT(request);
 
     const opArgs = {
@@ -70,13 +91,21 @@ const Query = {
       }];
     }
 
-    return models.Post.find(opArgs).skip(skip).limit(limit);
+    return models.Post.find(opArgs)
+        .skip(skip)
+        .limit(limit)
+        .sort({[field]: sort});
   },
   async comments(parent, {
     query,
     skip,
     limit,
+    orderBy,
   }, {models}, info) {
+    const {
+      field,
+      sort,
+    } = orderBy;
     const opArgs = {};
 
     if (query) {
@@ -86,7 +115,10 @@ const Query = {
       };
     }
 
-    return models.Comment.find(opArgs).skip(skip).limit(limit);
+    return models.Comment.find(opArgs)
+        .skip(skip)
+        .limit(limit)
+        .sort({[field]: sort});
   },
 };
 
