@@ -26,6 +26,24 @@ const filterQuery = (model, query) => {
   }
 };
 
+const findQuery = ({
+  model,
+  opArgs,
+  skip,
+  limit,
+  orderBy,
+}) => {
+  return (orderBy) ?
+    model.find(opArgs)
+        .skip(skip)
+        .limit(limit)
+        .sort({[orderBy.field]: orderBy.sort}) :
+    model.find(opArgs)
+        .skip(skip)
+        .limit(limit);
+};
+
 module.exports = {
   filterQuery,
+  findQuery,
 };
