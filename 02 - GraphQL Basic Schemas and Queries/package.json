@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "nodemon src/index.js --ext js,graphql",
-    "debug": "nodemon --inspect=5000 src/index.js --ext js,graphql"
+    "debug": "nodemon --inspect=5000 src/index.js --ext js,graphql",
+    "test": "jest --watch"
   },
   "author": "ArianAngoma",
   "license": "ISC",
@@ -21,6 +22,7 @@
   "devDependencies": {
     "eslint": "^8.10.0",
     "eslint-config-google": "^0.14.0",
+    "jest": "^27.5.1",
     "nodemon": "^2.0.15"
   }
 }
