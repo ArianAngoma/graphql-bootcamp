@@ -3,7 +3,7 @@ const {validateJWT} = require('../middlewares/validate-jwt');
 const {
   filterQuery,
   findQuery,
-} = require('../utils/db');
+} = require('../helpers/db');
 
 const Query = {
   async users(parent, {
